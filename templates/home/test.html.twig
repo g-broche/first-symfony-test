@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h2>session dump</h2>
+    <ul>
+{% for key, value in app.session %}
+    <li>{{ key }} : {{ value }}</li>
+{% endfor %}
+</ul>
+    {{ dump(app.user) }}
+    {{ dump(app.session) }}
+    {{ dump(app) }}
+{% endblock %}
