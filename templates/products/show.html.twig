@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products{% endblock %}
+
+{% block body %}
+    <h1>Products</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ product.id }}</td>
+            </tr>
+            <tr>
+                <th>Reference</th>
+                <td>{{ product.referenceId.numberReference }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ product.nameProduct }}</td>
+            </tr>
+            <tr>
+                <th>Category</th>
+                <td>{{ product.categoryId.nameCategory }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ product.descriptionProduct }}</td>
+            </tr>
+            <tr>
+                <th>Price</th>
+                <td>{{ product.priceProduct }}</td>
+            </tr>
+            <tr>
+                <th>Available</th>
+                <td>{{ product.availabilityProduct ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Distributors</th>
+                <td><select>
+                        {% for distributor in product.productDistributors %}
+                            <option>{{ distributor.nameDistributor }}</option>
+                        {% endfor %}
+                    </select></td>
+            </tr>
+        </tbody>
+    </table>
+
+{% endblock %}

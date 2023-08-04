@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\DBAL\Types\Types;
 
 /**
  * @extends ServiceEntityRepository<Products>
@@ -21,6 +22,132 @@ class ProductsRepository extends ServiceEntityRepository
         parent::__construct($registry, Products::class);
     }
 
+    public function getLastProduct($userIdentifier){
+        $getUserId = $this->_em->createQueryBuilder()
+        ->select('u.id')
+        ->from('App\Entity\User', 'u')
+        ->where('u.username = :identifier')
+        ->setParameter('identifier', $userIdentifier, Types::STRING )
+        ->getQuery()
+        ->getOneOrNullResult()['id'];
+
+        $lastProduct = $this->_em->createQueryBuilder()
+        ->select('p')
+        ->from('App\Entity\Products', 'p')
+        ->where('p.seller = :id')
+        ->orderBy('p.id', 'DESC')
+        ->setParameter('id', $getUserId, Types::INTEGER)
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getOneOrNullResult();
+        return $lastProduct;
+    }
+
+    public function getSellerProducts($userIdentifier){
+        $getUserId = $this->_em->createQueryBuilder()
+        ->select('u.id')
+        ->from('App\Entity\User', 'u')
+        ->where('u.username = :identifier')
+        ->setParameter('identifier', $userIdentifier, Types::STRING )
+        ->getQuery()
+        ->getOneOrNullResult()['id'];
+
+        $getProducts = $this->_em->createQueryBuilder()
+        ->select('p, r, c, d')
+        ->from('App\Entity\Products', 'p')
+        ->leftJoin('p.reference_id', 'r')
+        ->leftJoin('p.category_id', 'c')
+        ->leftJoin('p.product_distributors', 'd')
+        ->where('p.seller = :id')
+        ->setParameter('id', $getUserId, Types::INTEGER )
+        ->getQuery()
+        ->getArrayResult();
+
+        // dd($getProducts);
+        return $getProducts;
+    }
+
+    public function filterProductsOnRequest($userIdentifier, array $distributors, float $minPrice,
+    float|null $maxPrice, $targetCategory, $searchPattern)
+    {
+        $getUserId = $this->_em->createQueryBuilder()
+        ->select('u.id')
+        ->from('App\Entity\User', 'u')
+        ->where('u.username = :identifier')
+        ->setParameter('identifier', $userIdentifier, Types::STRING )
+        ->getQuery()
+        ->getOneOrNullResult()['id'];
+
+        $getFilteredProducts=$this->_em->createQueryBuilder()
+        ->select('p, r, c, d')
+        ->from('App\Entity\Products', 'p')
+        ->leftJoin('p.reference_id', 'r')
+        ->leftJoin('p.category_id', 'c')
+        ->leftJoin('p.product_distributors', 'd')
+        ->where('p.seller = :id')
+        ->setParameter('id', $getUserId, Types::INTEGER );
+
+        if(!empty($distributors)){
+            $getFilteredProducts
+            ->andWhere('d.name_distributor IN(:distributorList)')
+            ->setParameter('distributorList', array_values($distributors));
+        }
+        if($minPrice>=0){
+            $getFilteredProducts
+            ->andWhere('p.price_product >= :minPrice')
+            ->setParameter('minPrice', $minPrice, Types::FLOAT);
+        }
+        if($maxPrice!= null && $maxPrice>=0){
+            $getFilteredProducts
+            ->andWhere('p.price_product <= :maxPrice')
+            ->setParameter('maxPrice', $maxPrice, Types::FLOAT);
+        }
+
+        if(!empty($targetCategory)){
+            $getFilteredProducts
+            ->andWhere('c.name_category = :targetCategory')
+            ->setParameter('targetCategory', $targetCategory, Types::STRING);
+        }
+        if(!empty($searchPattern)){
+            $getFilteredProducts
+            ->andWhere('p.name_product like :pattern')
+            ->setParameter('pattern', '%'.$searchPattern.'%', Types::STRING);
+        }
+
+        return $getFilteredProducts->getQuery()->getArrayResult();
+    }
+
+    public function searchProducts($userIdentifier, string|null $targetCategory, string|null $searchPattern){
+        $getUserId = $this->_em->createQueryBuilder()
+        ->select('u.id')
+        ->from('App\Entity\User', 'u')
+        ->where('u.username = :identifier')
+        ->setParameter('identifier', $userIdentifier, Types::STRING )
+        ->getQuery()
+        ->getOneOrNullResult()['id'];
+
+        $getSearchedProducts=$this->_em->createQueryBuilder()
+        ->select('p, r, c, d')
+        ->from('App\Entity\Products', 'p')
+        ->leftJoin('p.reference_id', 'r')
+        ->leftJoin('p.category_id', 'c')
+        ->leftJoin('p.product_distributors', 'd')
+        ->where('p.seller = :id')
+        ->setParameter('id', $getUserId, Types::INTEGER );
+
+        if(!empty($targetCategory)){
+            $getSearchedProducts
+            ->andWhere('c.name_category = :targetCategory')
+            ->setParameter('targetCategory', $targetCategory, Types::STRING);
+        }
+        if(!empty($searchPattern)){
+            $getSearchedProducts
+            ->andWhere('p.name_product like :pattern')
+            ->setParameter('pattern', '%'.$searchPattern.'%', Types::STRING);
+        }
+        return $getSearchedProducts->getQuery()->getArrayResult();
+    }
+}
 //    /**
 //     * @return Products[] Returns an array of Products objects
 //     */
@@ -45,4 +172,4 @@ class ProductsRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-}
+

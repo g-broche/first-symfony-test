@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+    {% for messages in app.flashes %}
+        {% for message in messages %}
+            <span class="alert-flash">{{ message }}</span>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

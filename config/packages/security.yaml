@@ -45,6 +45,7 @@ security:
         - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/products, roles: ROLE_VERIFIED }
         - { path: ^/references, roles: ROLE_VERIFIED }
+        - { path: ^/search, roles: ROLE_VERIFIED }
         # - { path: ^/profile, roles: ROLE_USER }
 
         # - { path: ^/profile, roles: ROLE_USER }

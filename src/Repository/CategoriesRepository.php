@@ -21,6 +21,15 @@ class CategoriesRepository extends ServiceEntityRepository
         parent::__construct($registry, Categories::class);
     }
 
+    public function getAllByName(){
+        return $this->_em->createQueryBuilder()
+        ->select('c')
+        ->from('App\Entity\Categories', 'c')
+        ->orderBy('c.name_category', 'DESC')
+        ->getQuery()
+        ->getArrayResult();
+    }
+
 //    /**
 //     * @return Categories[] Returns an array of Categories objects
 //     */

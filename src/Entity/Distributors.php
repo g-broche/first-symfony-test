@@ -69,4 +69,9 @@ class Distributors
 
         return $this;
     }
+
+    public function __toString()
+    {
+        return $this->name_distributor;
+    }
 }

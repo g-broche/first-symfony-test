@@ -21,6 +21,15 @@ class DistributorsRepository extends ServiceEntityRepository
         parent::__construct($registry, Distributors::class);
     }
 
+    public function getAllByName(){
+        return $this->_em->createQueryBuilder()
+        ->select('d')
+        ->from('App\Entity\Distributors', 'd')
+        ->orderBy('d.name_distributor', 'DESC')
+        ->getQuery()
+        ->getArrayResult();
+    }
+
 //    /**
 //     * @return Distributors[] Returns an array of Distributors objects
 //     */

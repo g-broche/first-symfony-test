@@ -1,0 +1,121 @@
+:root {
+    --padding-sub: 20px;
+    --padding-vertical: 50px;
+}
+
+.page-wrapper,
+.page-top,
+aside,
+main {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+div.vertical-separator {
+    width: 0px;
+    height: 100%;
+    border-left: 1px solid black;
+}
+
+figure img {
+    max-width: 75px;
+    max-height: 75px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+div.page-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 50px;
+}
+
+section.page-top {
+    width: 100%;
+    text-align: center;
+}
+
+main.product-index {
+    padding: var(--padding-sub);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+main.product-index aside {
+    width: 15%
+}
+
+main.product-index section#product-grid {
+    width: 75%;
+
+}
+
+form#filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+section#distributor-inputs ul {
+    padding: 10px;
+}
+
+section#distributor-inputs ul li {
+    list-style: none;
+}
+
+section#price-inputs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+section#price-inputs>h4 {
+    width: 100%;
+    text-align: center;
+}
+
+section#price-inputs>div {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+section#price-inputs>div>input[type=number] {
+    width: 5em;
+}
+
+
+
+/* Chrome, Safari, Edge, Opera */
+section#price-inputs>div>input::-webkit-outer-spin-button,
+section#price-inputs>div>input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+section#price-inputs>div>input[type=number] {
+    -moz-appearance: textfield;
+}
+
+form#filter-form input[type=submit] {
+    padding: 3px 15px;
+    align-self: flex-end;
+}
+
+section.search-component {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+section.search-component>form {
+    display: flex;
+    gap: 20px
+}

@@ -14,7 +14,7 @@ class ReferencesType extends AbstractType
     {
         $builder
             ->add('number_reference',TextType::class, [
-                'label' => 'Product\'s reference'
+                'label' => false
             ])
         ;
     }

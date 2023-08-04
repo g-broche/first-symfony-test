@@ -1,0 +1,151 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Products index
+{% endblock %}
+
+{% block body %}
+	{% if app.user %}
+		<div class="page-wrapper">
+			<section class="page-top">
+				<h1>Products index</h1>
+				<a href="{{ path('app_products_new') }}">add new product</a>
+				{% if previousQueryParameters is defined %}
+				{{dump(previousQueryParameters)}}
+				{% endif %}	
+			</section>
+			<section class="search-component">
+				<form action="/products/" method="GET" role="search">
+					<select name="category" id="categoryFilter">
+						<option value="all">All categories</option>
+						{% for category in categoryList %}
+							<option value="{{category.name_category}}" {% if (previousQueryParameters.targetCategory is defined) and (category.name_category == previousQueryParameters.targetCategory) %} selected="true" {% endif %}>
+								{{category.name_category}}
+							</option>
+						{% endfor %}
+					</select>
+					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchQuery" {% if previousQueryParameters.searchedName is defined %} value="{{previousQueryParameters.searchedName}}" {% endif %}>
+					<button name="search" value="search" class="btn btn-outline-success" type="submit">Search</button>
+				</form>
+			</section>
+			<main class="product-index">
+				<aside>
+					<form id="filter-form" action="/products" method="GET">
+						<section id="distributor-inputs">
+							<h4>Available distributors</h4>
+							<ul id="distributor-checklist">
+								{% for distributor in distributorList %}
+									<li>
+										<input id="box-{{distributor.name_distributor}}" type="checkbox" name="allowedDistributors[{{loop.index0}}]" value="{{distributor.name_distributor}}" {% if (previousQueryParameters.allowedDistributors is defined) and (distributor.name_distributor in previousQueryParameters.allowedDistributors) %} checked="true" {% endif %}>
+										<label for="box-{{distributor.name_distributor}}">{{distributor.name_distributor}}</label>
+									</li>
+								{% endfor %}
+							</ul>
+						</section>
+						<section id="price-inputs">
+							<h4>Price range</h4>
+							<div>
+								<label for="input-min">minimum</label>
+								<input id="input-min" type="number" min:"0.01" name="minPrice" {% if previousQueryParameters.minPrice is defined %} value={{previousQueryParameters.minPrice}} {% endif %}>
+							</div>
+							<div>
+								<label for="input-min">maximum</label>
+								<input id="input-max" type="number" min:"0.01" name="maxPrice" {% if previousQueryParameters.maxPrice is defined %} value={{previousQueryParameters.maxPrice}} {% endif %}>
+							</div>
+						</section>
+						<input type="submit" name="filter" value="filter">
+						{% if previousQueryParameters.targetCategory is defined %}
+							<input type="hidden" name="category" value="{{previousQueryParameters.targetCategory}}">
+						{% endif %}
+						{% if previousQueryParameters.searchedName is defined %}
+							<input type="hidden" name="searchQuery" value="{{previousQueryParameters.searchedName}}">
+						{% endif %}
+					</form>
+				</aside>
+				<div class="vertical-separator"></div>
+				<section id="product-grid">
+					<div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Id</th>
+									<th>Reference</th>
+									<th>Name</th>
+									<th>Category</th>
+									<th>Picture</th>
+									<th>Description</th>
+									<th>Price</th>
+									<th>Availability</th>
+									<th>distributors</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% if lastProduct is defined %}
+									<tr>
+										<td>{{ lastProduct.id }}</td>
+										<td>{{ lastProduct.referenceId.numberReference }}</td>
+										<td>{{ lastProduct.nameProduct }}</td>
+										<td>{{ lastProduct.categoryId.nameCategory }}</td>
+										<td>
+											{% if lastProduct.imageProduct != null %}
+												<figure><img src="/img/{{ asset(lastProduct.imageProduct) }}" alt="photo-{{ lastProduct.nameProduct }}"></figure>
+											{% else %}
+												no picture associated to this product
+											{% endif %}
+										</td>
+										<td>{{ lastProduct.descriptionProduct }}</td>
+										<td>{{ lastProduct.priceProduct }}</td>
+										<td>{{ lastProduct.availabilityProduct ? 'Yes' : 'No' }}</td>
+										<td>
+											<select>
+												{% for distributor in lastProduct.productDistributors %}
+													<option>{{ distributor.nameDistributor }}</option>
+												{% endfor %}
+											</select>
+										</td>
+										<td>
+											<a href="{{ path('app_products_show', {'id': lastProduct.id}) }}">show</a>
+											<a href="{{ path('app_products_edit', {'id': lastProduct.id}) }}">edit</a>
+										</td>
+									</tr>
+								{% endif %}
+								{% for product in products %}
+									{% if (lastProduct is not defined) or (lastProduct is defined and product.id != lastProduct.id) %}
+										<tr>
+											<td>{{ product.id }}</td>
+											<td>{{ product.reference_id.number_reference }}</td>
+											<td>{{ product.name_product }}</td>
+											<td>{{ product.category_id.name_category }}</td>
+											<td>
+												{% if product.image_product != null %}
+													<figure><img src="/img/{{ asset(product.image_product) }}" alt="photo-{{ product.name_product }}"></figure>
+												{% else %}
+													no picture associated to this product
+												{% endif %}
+											</td>
+											<td>{{ product.description_product }}</td>
+											<td>{{ product.price_product }}
+												€</td>
+											<td>{{ product.availability_product ? 'Yes' : 'No' }}</td>
+											<td>
+												<select>
+													{% for distributor in product.product_distributors %}
+														<option>{{ distributor.name_distributor }}</option>
+													{% endfor %}
+												</select>
+											</td>
+											<td>
+												<a href="{{ path('app_products_show', {'id': product.id}) }}">show</a>
+												<a href="{{ path('app_products_edit', {'id': product.id}) }}">edit</a>
+											</td>
+										</tr>
+									{% endif %}
+								{% endfor %}
+							</tbody>
+						</tbody>
+					</table>
+				</section>
+			</main>
+		</div>
+	{% endif %}
+{% endblock %}

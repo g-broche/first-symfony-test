@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}References{% endblock %}
+
+{% block body %}
+    <h1>References</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ reference.id }}</td>
+            </tr>
+            <tr>
+                <th>Number_reference</th>
+                <td>{{ reference.numberReference }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_references_index') }}">back to list</a>
+
+    <a href="{{ path('app_references_edit', {'id': reference.id}) }}">edit</a>
+
+    {{ include('references/_delete_form.html.twig') }}
+{% endblock %}

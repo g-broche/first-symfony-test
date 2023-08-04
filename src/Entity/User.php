@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,6 +42,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(type: 'boolean')]
     private $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'seller', targetEntity: Products::class)]
+    private Collection $Merchandise;
+
+    public function __construct()
+    {
+        $this->Merchandise = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -136,5 +146,39 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Products>
+     */
+    public function getMerchandise(): Collection
+    {
+        return $this->Merchandise;
+    }
+
+    public function addMerchandise(Products $merchandise): static
+    {
+        if (!$this->Merchandise->contains($merchandise)) {
+            $this->Merchandise->add($merchandise);
+            $merchandise->setSeller($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMerchandise(Products $merchandise): static
+    {
+        if ($this->Merchandise->removeElement($merchandise)) {
+            // set the owning side to null (unless already changed)
+            if ($merchandise->getSeller() === $this) {
+                $merchandise->setSeller(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __tostring(){
+        return $this->username;
     }
 }

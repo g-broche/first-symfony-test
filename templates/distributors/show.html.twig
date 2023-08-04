@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Distributors{% endblock %}
+
+{% block body %}
+    <h1>Distributors</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ distributor.id }}</td>
+            </tr>
+            <tr>
+                <th>Name_distributor</th>
+                <td>{{ distributor.nameDistributor }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_distributors_index') }}">back to list</a>
+
+    <a href="{{ path('app_distributors_edit', {'id': distributor.id}) }}">edit</a>
+
+    {{ include('distributors/_delete_form.html.twig') }}
+{% endblock %}
