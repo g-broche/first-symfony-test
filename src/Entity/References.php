@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\ReferencesRepository;
 use Doctrine\ORM\Mapping as ORM;
+// use ApiPlatform\Metadata\ApiResource;
 
 #[ORM\Entity(repositoryClass: ReferencesRepository::class)]
 #[ORM\Table(name: '`references`')]
+// #[ApiResource]
 class References
 {
     #[ORM\Id]

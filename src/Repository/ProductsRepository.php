@@ -6,6 +6,7 @@ use App\Entity\Products;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Types\Types;
+use PhpParser\Node\Stmt\TryCatch;
 
 /**
  * @extends ServiceEntityRepository<Products>
@@ -147,29 +148,51 @@ class ProductsRepository extends ServiceEntityRepository
         }
         return $getSearchedProducts->getQuery()->getArrayResult();
     }
-}
-//    /**
-//     * @return Products[] Returns an array of Products objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
 
-//    public function findOneBySomeField($value): ?Products
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+    public function getApiProducts(){
+        try {
+            $getProducts = $this->_em->createQueryBuilder()
+            ->select('p, r, c, d, u')
+            ->from('App\Entity\Products', 'p')
+            ->leftJoin('p.reference_id', 'r')
+            ->leftJoin('p.category_id', 'c')
+            ->leftJoin('p.product_distributors', 'd')
+            ->leftJoin('p.seller', 'u')
+            ->getQuery()
+            ->getArrayResult();
+            if(!empty($getProducts)){
+                return ["success" => true, "data" => $getProducts];
+            }else{
+                return ["success" => true, "data" => null];
+            }
+        } catch (\Throwable $th) {
+            return ["success" => false, "data" => null];
+        }
+    }
+
+    public function getSingleApiProduct($id){
+
+        try {
+            $getProducts = $this->_em->createQueryBuilder()
+            ->select('p, r, c, d, u')
+            ->from('App\Entity\Products', 'p')
+            ->leftJoin('p.reference_id', 'r')
+            ->leftJoin('p.category_id', 'c')
+            ->leftJoin('p.product_distributors', 'd')
+            ->leftJoin('p.seller', 'u')
+            ->where('p.id=:id')
+            ->setParameter('id', $id, Types::INTEGER )
+            ->getQuery()
+            ->getArrayResult();
+            if(!empty($getProducts)){
+                return ["success" => true, "data" => $getProducts[0]];
+            }else{
+                return ["success" => true, "data" => null];
+            }
+        } catch (\Throwable $th) {
+            return ["success" => false, "data" => null];
+        }
+    }
+}
 

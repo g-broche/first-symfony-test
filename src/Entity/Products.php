@@ -9,10 +9,12 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+// use ApiPlatform\Metadata\ApiResource;
 
 
 #[ORM\Entity(repositoryClass: ProductsRepository::class)]
 #[UniqueEntity(fields: ['name_product'], message: 'A product with this name already exists')]
+// #[ApiResource]
 class Products
 {
     #[ORM\Id]
